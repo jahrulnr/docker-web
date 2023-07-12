@@ -1,0 +1,43 @@
+version: "2.2"
+services:
+  nginx:
+    build: ./nginx/
+    container_name: nginx-container
+    ports:
+      - 80:80
+      - 443:443
+    links:
+      - php
+    volumes:
+      - ./www/html/:/var/www/html
+    # cpus: 0.5
+    # mem_limit: 512m
+
+  php:
+    build: ./php/
+    container_name: php-container
+    expose:
+      - 9000/tcp
+    links:
+      - mysql
+    volumes:
+      - ./www/html/:/var/www/html/
+    # cpus: 2
+    # mem_limit: 2g
+
+  mysql:
+    build: ./mysql/
+    container_name: mysql-container
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/conf.d/:/etc/mysql/conf.d
+      - ./mysql/data/:/var/lib/mysql
+      - ./mysql/:/home
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 1
+      MARIADB_DATABASE: user
+      MARIADB_USER: user
+      MARIADB_PASSWORD: 1234
+    # cpus: 2
+    # mem_limit: 2g
